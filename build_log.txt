@@ -1,0 +1,5 @@
+src/components/CameraController.tsx(4,10): error TS1484: 'MutableRefObject' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/CameraController.tsx(4,28): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/CameraController.tsx(4,39): error TS6133: 'useRef' is declared but its value is never read.
+src/components/CameraController.tsx(11,15): error TS6133: 'state' is declared but its value is never read.
+src/components/CameraController.tsx(59,33): error TS2304: Cannot find name 'THREE'.
