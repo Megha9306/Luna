@@ -1,4 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { useGestureStore } from '../store';
 import { useEffect } from 'react';
 import * as THREE from 'three';
@@ -49,7 +49,7 @@ export const InteractionController = () => {
                 // Target position for camera:
                 // Normalized vector to star * 10 (camera distance)
                 const targetDir = new THREE.Vector3(x, y, z).normalize();
-                const camPos = targetDir.multiplyScalar(0.1); // Move camera very close to origin, looking OUT?
+                targetDir.multiplyScalar(0.1); // Move camera very close to origin, looking OUT?
                 // Actually, OrbitControls defaults to looking AT target (0,0,0).
                 // If we want to look AT the sky, we technically are "Inverse Orbit".
                 // Usually for Skybox, we put camera at 0,0,0 and verify controls rotate camera.

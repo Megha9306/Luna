@@ -1,5 +1,5 @@
 import { useGestureStore } from '../../store';
-import { X, Info, MapPin, BookOpen } from 'lucide-react'; // Added icons
+import { X, MapPin, BookOpen } from 'lucide-react'; // Added icons
 import { constellationNames } from '../../data/constellationNames';
 import { getConstellationDetails } from '../../data/constellationDetails';
 import { useEffect, useState } from 'react';

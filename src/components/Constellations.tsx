@@ -36,7 +36,7 @@ export const Constellations = () => {
 
     return (
         <group>
-            {lines.map((constellation, cIndex) => (
+            {lines.map((constellation) => (
                 <group key={constellation.id}>
                     {constellation.shape.map((points, index) => (
                         <group key={`${constellation.id}-${index}`}>
@@ -69,7 +69,7 @@ export const Constellations = () => {
                                     e.stopPropagation();
                                     document.body.style.cursor = 'pointer';
                                 }}
-                                onPointerOut={(e) => {
+                                onPointerOut={() => {
                                     document.body.style.cursor = 'auto';
                                 }}
                             />
