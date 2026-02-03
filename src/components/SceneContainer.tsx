@@ -12,7 +12,7 @@ import { calculateLST } from '../utils/time';
 
 export const SceneContainer = () => {
     const controlsRef = useRef<OrbitControlsImpl>(null);
-    const { observerLocation, observerDate } = useGestureStore();
+    const { observerLocation, observerDate, autoRotate } = useGestureStore();
 
     // 1. Calculate LST (Local Sidereal Time)
     // This is the rotation around the Earth's axis (Y-axis in our scene, effectively)
@@ -70,7 +70,7 @@ export const SceneContainer = () => {
                         enableZoom={false}
                         enablePan={false}
                         enableRotate={true}
-                        autoRotate={true}
+                        autoRotate={autoRotate}
                         autoRotateSpeed={0.2}
                         rotateSpeed={0.5}
                     />

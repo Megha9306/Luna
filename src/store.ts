@@ -27,6 +27,9 @@ interface GestureState {
 
     setObserverLocation: (loc: { lat: number; lon: number }) => void;
     setObserverDate: (date: Date) => void;
+
+    autoRotate: boolean;
+    setAutoRotate: (val: boolean) => void;
 }
 
 export const useGestureStore = create<GestureState>((set) => ({
@@ -55,4 +58,7 @@ export const useGestureStore = create<GestureState>((set) => ({
     observerDate: new Date(),
     setObserverLocation: (loc) => set({ observerLocation: loc }),
     setObserverDate: (date) => set({ observerDate: date }),
+
+    autoRotate: true,
+    setAutoRotate: (val) => set({ autoRotate: val }),
 }));

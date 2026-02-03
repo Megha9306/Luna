@@ -10,10 +10,13 @@ const STAR_RADIUS = 500;
 
 export const InteractionController = () => {
     const { camera } = useThree();
-    const { selectedConstellation, observerLocation, observerDate } = useGestureStore();
+    const { selectedConstellation, observerLocation, observerDate, setAutoRotate } = useGestureStore();
 
     useEffect(() => {
         if (selectedConstellation) {
+            // Disable auto-rotation when focusing on a constellation
+            setAutoRotate(false);
+
             // Find coordinates of the constellation
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const feature = constellationsRaw.features.find((f: any) => f.id === selectedConstellation);
@@ -72,8 +75,11 @@ export const InteractionController = () => {
                 // Because we set position and it looks at 0,0,0 (which is OrbitControls target by default),
                 // this is compatible with OrbitControls state.
             }
+        } else {
+            // Optional: Re-enable auto-rotation when nothing is selected
+            setAutoRotate(true);
         }
-    }, [selectedConstellation, camera, observerLocation, observerDate]);
+    }, [selectedConstellation, camera, observerLocation, observerDate, setAutoRotate]);
 
     return null;
 };
