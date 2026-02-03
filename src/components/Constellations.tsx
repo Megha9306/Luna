@@ -53,11 +53,7 @@ export const Constellations = () => {
                                 points={points}
                                 color="hotpink" // Debug color, but 0 opacity
                                 lineWidth={20} // Much thicker for easy clicking
-                                visible={false} // visible=false might disable raycast in Three.js sometimes? 
-                                // Actually, visible objects are usually raycasted.
-                                // If we set opacity={0} and transparent, it is rendered but invisible.
-                                // But `Line` from Drei might optimize.
-                                // Let's try opacity 0.
+                                visible={true}
                                 opacity={0}
                                 transparent
                                 onClick={(e) => {
