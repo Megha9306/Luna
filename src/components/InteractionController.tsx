@@ -14,7 +14,7 @@ export const InteractionController = () => {
     useEffect(() => {
         if (selectedConstellation) {
             // Find coordinates of the constellation
-            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const feature = constellationsRaw.features.find((f: any) => f.id === selectedConstellation);
             if (feature) {
                 // Approximate center by taking first point of first line

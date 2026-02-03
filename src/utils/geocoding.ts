@@ -6,6 +6,13 @@ export interface GeocodingResult {
     display_name: string;
 }
 
+interface NominatimResult {
+    lat: string;
+    lon: string;
+    name: string;
+    display_name: string;
+}
+
 export const searchLocation = async (query: string): Promise<GeocodingResult[]> => {
     if (!query || query.length < 3) return [];
 
@@ -26,8 +33,7 @@ export const searchLocation = async (query: string): Promise<GeocodingResult[]> 
 
         const data = await response.json();
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data.map((item: any) => ({
+        return (data as NominatimResult[]).map((item) => ({
             lat: parseFloat(item.lat),
             lon: parseFloat(item.lon),
             name: item.name || item.display_name.split(',')[0],

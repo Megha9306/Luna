@@ -15,10 +15,10 @@ export const SearchBar = () => {
 
         if (val.length > 1) {
             const lowerVal = val.toLowerCase();
-            // @ts-ignore
             const features = constellationsRaw.features;
 
             // Filter by ID match OR Name match
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const filtered = features.filter((f: any) => {
                 const id = f.id;
                 const name = constellationNames[id] || "";
@@ -31,6 +31,7 @@ export const SearchBar = () => {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleSelect = (constellation: any) => {
         console.log('Selected:', constellation.id);
         setSelectedConstellation(constellation.id);

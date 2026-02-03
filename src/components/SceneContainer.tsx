@@ -49,7 +49,7 @@ export const SceneContainer = () => {
                 raycaster={{
                     params: {
                         Line: { threshold: 5 }
-                    } as any
+                    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
                 }}
             >
                 <Suspense fallback={null}>
