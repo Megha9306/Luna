@@ -14,7 +14,11 @@ export const SceneContainer = () => {
         <div style={{ width: '100vw', height: '100vh', background: 'black' }}>
             <Canvas
                 camera={{ position: [0, 0, 10], fov: 60 }}
-                raycaster={{ params: { Line: { threshold: 5 } } }} // Increase line hit threshold
+                raycaster={{
+                    params: {
+                        Line: { threshold: 5 }
+                    } as any
+                }} // Increase line hit threshold
             >
                 <Suspense fallback={null}>
                     <ambientLight intensity={0.2} />

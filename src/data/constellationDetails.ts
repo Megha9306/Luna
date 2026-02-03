@@ -46,7 +46,7 @@ export const constellationDetails: Record<string, ConstellationInfo> = {
     "Gru": { meaning: "Crane", hint: "The 'Southern Birds' region.", description: "Represents the crane bird." },
     "Her": { meaning: "Hercules, son of Zeus", hint: "Look for the 'Keystone' asterism.", description: "The greatest of the Greek heroes." },
     "Hor": { meaning: "Clock", hint: "Faint southern constellation.", description: "A pendulum clock." },
-    "Hya": { meaning: "Sea serpent", hint: "Largest constellation, winding across the sky.", description: "Use Spica to find it.", description: "The water snake killed by Hercules." },
+    "Hya": { meaning: "Sea serpent", hint: "Largest constellation, winding across the sky.", description: "The water snake killed by Hercules." },
     "Hyi": { meaning: "Water snake", hint: "Southern counterpart to Hydra.", description: "A small water snake." },
     "Ind": { meaning: "Indian", hint: "Southern sky.", description: "The figure of an indigenous person found in the East Indies." },
     "Lac": { meaning: "Lizard", hint: "Zigzag shape between Andromeda and Cygnus.", description: "A lizard." },
@@ -79,7 +79,6 @@ export const constellationDetails: Record<string, ConstellationInfo> = {
     "Sgr": { meaning: "Archer", hint: "Teapot asterism in the Milky Way center.", description: "A centaur drawing a bow." },
     "Sco": { meaning: "Scorpion", hint: "Distinct hook shape with red Antares.", description: "The scorpion that stung Orion." },
     "Scl": { meaning: "Sculptor's tools", hint: "Faint region near the south galactic pole.", description: "A sculptor's studio." },
-    "Scu": { meaning: "Shield", hint: "Bright star cloud in the Milky Way.", description: "The shield of Jan Sobieski." }, // Note: Abbr is Scu not Sct in some lists, but IAU is Sct. Let's start with Scu if users types that, but standard is Sct. Wait, existing uses Sct. I will fix key to Sct.
     "Sct": { meaning: "Shield", hint: "Bright star cloud in the Milky Way.", description: "The shield of Jan Sobieski." },
     "Ser": { meaning: "Serpent", hint: "Divided into two parts: Head and Tail.", description: "The snake held by Ophiuchus." },
     "Sex": { meaning: "Sextant", hint: "Faint area under Leo.", description: "Astronomical sextant." },
