@@ -3,13 +3,14 @@ import { useGestureStore } from '../store';
 import { useEffect } from 'react';
 import * as THREE from 'three';
 import { convertCelestialToCartesian } from '../utils/astronomy';
+import { calculateLST } from '../utils/time';
 import constellationsRaw from '../data/constellations.json';
 
 const STAR_RADIUS = 500;
 
 export const InteractionController = () => {
     const { camera } = useThree();
-    const { selectedConstellation } = useGestureStore();
+    const { selectedConstellation, observerLocation, observerDate } = useGestureStore();
 
     useEffect(() => {
         if (selectedConstellation) {
@@ -17,77 +18,62 @@ export const InteractionController = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const feature = constellationsRaw.features.find((f: any) => f.id === selectedConstellation);
             if (feature) {
-                // Approximate center by taking first point of first line
-                // Ideally, calculate centroid
                 const firstLine = feature.geometry.coordinates[0];
                 const [ra, dec] = firstLine[0]; // [RA, Dec]
 
-                // Convert to Cartesian
-                const [x, y, z] = convertCelestialToCartesian(ra, dec, STAR_RADIUS * 0.8); // 0.8 to be inside looking out? Or just direction.
+                // 1. Get the local position of the star in the Sky Group
+                // (before any scene rotation)
+                const [x, y, z] = convertCelestialToCartesian(ra, dec, STAR_RADIUS);
 
-                // We want to look AT this point.
-                // Or better, move camera such that it looks at this point.
-                // Since we are at 0,0,0 usually? No, camera is at 0,0,10.
-                // We rotate the camera to look at [x,y,z].
+                // 2. Apply the Scene Rotations to get World Position
+                // Scene hierarchy:
+                // Outer Group: Rotation X (90 - Lat)
+                // Inner Group: Rotation Y (-LST)
+                // Star is inside Inner Group.
 
-                // For OrbitControls, we usually change the target or the camera position.
-                // Since we are inside a sphere? No, standard flyover usually means we are outside looking in or inside looking out.
-                // Our Scene has stars at radius 500. Camera at 0,0,10.
-                // We are inside. To look at a star, we just rotate (lookAt).
+                const starLocal = new THREE.Vector3(x, y, z);
 
-                // Animate rotation?
-                // For now, let's just snap lookAt. 
-                // But OrbitControls fights `lookAt`. We must set OrbitControls target.
-                // Actually, if we are at center (0,0,0) looking out?
-                // Wait, Camera is at [0,0,10]. Stars at 500.
-                // If we want to simulate night sky, usually Camera should be at 0,0,0 and we rotate.
-                // But `OrbitControls` rotates the camera around a target (default 0,0,0).
+                // Rotation for LST (around Y axis)
+                const lstRad = calculateLST(observerDate, observerLocation.lon);
+                const rotY = new THREE.Matrix4().makeRotationY(-lstRad);
 
-                // If we want to look at a specific constellation, we need to move the camera OR rotate the camera safely.
-                // If using OrbitControls with target 0,0,0, rotating the camera means moving it on the sphere surface.
+                // Rotation for Latitude (around X axis)
+                const latRad = (90 - observerLocation.lat) * (Math.PI / 180);
+                const rotX = new THREE.Matrix4().makeRotationX(latRad);
 
-                // Target position for camera:
-                // Normalized vector to star * 10 (camera distance)
-                const targetDir = new THREE.Vector3(x, y, z).normalize();
-                targetDir.multiplyScalar(0.1); // Move camera very close to origin, looking OUT?
-                // Actually, OrbitControls defaults to looking AT target (0,0,0).
-                // If we want to look AT the sky, we technically are "Inverse Orbit".
-                // Usually for Skybox, we put camera at 0,0,0 and verify controls rotate camera.
-                // Standard OrbitControls rotates Camera around Target.
-                // If Target is 0,0,0, Camera moves on sphere. Visually valid for "Outside looking in" object.
-                // For "Inside looking out" (Sky), we want Camera at 0,0,0 and rotate Camera.
-                // `OrbitControls` can do this if we set `enablePan={false}` and `enableZoom={false}` ? 
-                // Or we use different controls.
+                // Transform: World = RotX * RotY * Local
+                const starWorld = starLocal.clone();
+                starWorld.applyMatrix4(rotY); // Apply Inner rotation first
+                starWorld.applyMatrix4(rotX); // Then Outer rotation
 
-                // Current setup: Camera at [0,0,10], Looking at 0,0,0.
-                // Stars at 500 radius.
-                // Basically we are looking at the "Core" of the universe?
-                // No, we are looking at 0,0,0. Stars are behind us?
-                // Stars are all around.
+                // 3. Move Camera to look at this World Position
+                // We want the camera to be at a position such that it looks towards 'starWorld'.
+                // Since we are at the center (0,0,0) looking out at the sphere, 
+                // we want the camera to be rotated to align with 'starWorld'.
+                // BUT OrbitControls is active. It orbits around a target (default 0,0,0).
+                // If we want to simulate "Looking At" a star while using OrbitControls at the center:
+                // We usually position the camera at (0,0,0) and look at the star.
+                // However, our scene seems to be "Outside Looking In" or "Inside Looking Out" hybrid?
+                // SceneContainer puts camera at [0,0,10]. Stars at 500.
+                // We are inside.
+                // To look at a star, we should place the camera such that it faces the star.
+                // Since OrbitControls targets 0,0,0, the Camera MUST face 0,0,0.
+                // So we must place the Camera on the line connecting Star and Origin, on the opposite side.
+                // Configuration: [Star] --- [Origin] --- [Camera] -> Looking at Origin.
+                // So Camera Position = - (Normalized Star World Vector) * CameraDistance.
 
-                // To look at a star at [x,y,z]:
-                // We need to place camera such that -CameraVector points to Star? 
-                // No, Camera looks at 0,0,0.
-                // So Star must be "behind" 0,0,0 relative to Camera?
-                // This is confusing. 
+                const cameraDist = 10;
+                const lookDir = starWorld.clone().normalize();
+                const newCamPos = lookDir.clone().negate().multiplyScalar(cameraDist);
 
-                // FIX: For a sky simulation, Camera should be at 0,0,0 (or close) and controls should rotate LookDirection.
-                // OrbitControls rotates the Camera Position around the Target.
-                // If we stay at distance 0.1 from 0,0,0, we are effectively just rotating view.
-
-                // Let's assume we maintain the current setup.
-                // To "Look at" a constellation, we move the camera to valid spherical coordinates that align the view.
-
-                const lookDist = 10; // Maintain radius 10
-                // We want: Camera -> 0,0,0 -> Star
-                // So Camera should be Opposite to Star Vector.
-                const camNewPos = targetDir.clone().negate().multiplyScalar(lookDist);
-
-                camera.position.copy(camNewPos);
+                camera.position.copy(newCamPos);
                 camera.lookAt(0, 0, 0);
+                // Note: OrbitControls will update effectively on next frame.
+                // Because we set position and it looks at 0,0,0 (which is OrbitControls target by default),
+                // this is compatible with OrbitControls state.
             }
         }
-    }, [selectedConstellation, camera]);
+    }, [selectedConstellation, camera, observerLocation, observerDate]);
 
     return null;
 };
