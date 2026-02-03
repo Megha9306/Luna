@@ -12,6 +12,9 @@ interface GestureState {
     selectedConstellation: string | null;
     targetCameraPosition: { x: number; y: number; z: number } | null;
 
+    observerLocation: { lat: number; lon: number };
+    observerDate: Date;
+
     setHandDetected: (detected: boolean) => void;
     setGesture: (gesture: 'NONE' | 'PAN' | 'ZOOM') => void;
     setPanDelta: (delta: { x: number; y: number }) => void;
@@ -21,6 +24,9 @@ interface GestureState {
     setSearchQuery: (query: string) => void;
     setSelectedConstellation: (id: string | null) => void;
     setTargetCameraPosition: (pos: { x: number; y: number; z: number } | null) => void;
+
+    setObserverLocation: (loc: { lat: number; lon: number }) => void;
+    setObserverDate: (date: Date) => void;
 }
 
 export const useGestureStore = create<GestureState>((set) => ({
@@ -43,4 +49,10 @@ export const useGestureStore = create<GestureState>((set) => ({
     setSearchQuery: (query) => set({ searchQuery: query }),
     setSelectedConstellation: (id) => set({ selectedConstellation: id }),
     setTargetCameraPosition: (pos) => set({ targetCameraPosition: pos }),
+
+    // Observer State Actions
+    observerLocation: { lat: 0, lon: 0 },
+    observerDate: new Date(),
+    setObserverLocation: (loc) => set({ observerLocation: loc }),
+    setObserverDate: (date) => set({ observerDate: date }),
 }));

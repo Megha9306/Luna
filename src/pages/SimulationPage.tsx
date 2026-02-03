@@ -3,6 +3,7 @@ import { GestureController } from '../components/GestureController';
 import { SearchBar } from '../components/UI/SearchBar';
 import { ControlToggle } from '../components/UI/ControlToggle';
 import { DetailPanel } from '../components/UI/DetailPanel';
+import { LocationTimePanel } from '../components/UI/LocationTimePanel';
 import { useGestureStore } from '../store';
 
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +52,7 @@ export const SimulationPage = () => {
 
             <ControlToggle />
             <DetailPanel />
+            <LocationTimePanel />
 
             {/* HUD Overlay - Minimal */}
             {inputMode === 'GESTURE' && (
