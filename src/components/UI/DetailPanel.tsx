@@ -2,16 +2,15 @@ import { useGestureStore } from '../../store';
 import { X, MapPin, BookOpen } from 'lucide-react'; // Added icons
 import { constellationNames } from '../../data/constellationNames';
 import { getConstellationDetails } from '../../data/constellationDetails';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 export const DetailPanel = () => {
     const { selectedConstellation, setSelectedConstellation } = useGestureStore();
-    const [info, setInfo] = useState<any>(null); // Use any or specific type
-
-    useEffect(() => {
+    const info = useMemo(() => {
         if (selectedConstellation) {
-            setInfo(getConstellationDetails(selectedConstellation));
+            return getConstellationDetails(selectedConstellation);
         }
+        return null;
     }, [selectedConstellation]);
 
     if (!selectedConstellation) return null;

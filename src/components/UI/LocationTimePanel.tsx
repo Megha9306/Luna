@@ -4,6 +4,13 @@ import { useGestureStore } from '../../store';
 import { Clock, MapPin, Search, Loader2 } from 'lucide-react';
 import { searchLocation, type GeocodingResult } from '../../utils/geocoding';
 
+// Format date for datetime-local input: YYYY-MM-DDThh:mm
+const formatDate = (date: Date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 16);
+};
+
 export const LocationTimePanel = () => {
     const {
         observerLocation,
@@ -11,13 +18,6 @@ export const LocationTimePanel = () => {
         observerDate,
         setObserverDate
     } = useGestureStore();
-
-    // Format date for datetime-local input: YYYY-MM-DDThh:mm
-    const formatDate = (date: Date) => {
-        const d = new Date(date);
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return d.toISOString().slice(0, 16);
-    };
 
     const [dateStr, setDateStr] = useState(formatDate(observerDate));
 

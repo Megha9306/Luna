@@ -4,10 +4,14 @@ import { useGestureStore } from '../../store';
 import constellationsRaw from '../../data/constellations.json';
 import { constellationNames } from '../../data/constellationNames';
 
+interface SearchResult {
+    id: string;
+}
+
 export const SearchBar = () => {
     const { setSelectedConstellation } = useGestureStore();
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<SearchResult[]>([]);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -18,8 +22,7 @@ export const SearchBar = () => {
             const features = constellationsRaw.features;
 
             // Filter by ID match OR Name match
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const filtered = features.filter((f: any) => {
+            const filtered = (features as unknown as SearchResult[]).filter((f) => {
                 const id = f.id;
                 const name = constellationNames[id] || "";
                 return id.toLowerCase().includes(lowerVal) || name.toLowerCase().includes(lowerVal);
@@ -31,8 +34,7 @@ export const SearchBar = () => {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSelect = (constellation: any) => {
+    const handleSelect = (constellation: SearchResult) => {
         console.log('Selected:', constellation.id);
         setSelectedConstellation(constellation.id);
         setQuery('');

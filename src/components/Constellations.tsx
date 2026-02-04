@@ -19,7 +19,6 @@ export const Constellations = () => {
     const { setSelectedConstellation, selectedConstellation } = useGestureStore();
 
     const lines = useMemo(() => {
-        // @ts-ignore
         const features = constellationsRaw.features as ConstellationFeature[];
         return features.map(feature => {
             const shape: THREE.Vector3[][] = [];

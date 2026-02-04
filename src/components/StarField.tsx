@@ -18,8 +18,7 @@ const STAR_RADIUS = 500;
 
 export const StarField = () => {
     const geometry = useMemo(() => {
-        // @ts-ignore
-        const features = starDataRaw.features as StarFeature[];
+        const features = starDataRaw.features as unknown as StarFeature[];
         const positions: number[] = [];
         const colors: number[] = [];
         const sizes: number[] = [];

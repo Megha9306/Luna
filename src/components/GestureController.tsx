@@ -8,6 +8,7 @@ export const GestureController = () => {
     const lastVideoTime = useRef(-1);
 
     useEffect(() => {
+        const videoElement = videoRef.current;
         let handLandmarker: HandLandmarker | null = null;
         let animationFrameId: number;
 
@@ -29,24 +30,24 @@ export const GestureController = () => {
         };
 
         const startWebcam = async () => {
-            if (!videoRef.current) return;
+            if (!videoElement) return;
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                videoRef.current.srcObject = stream;
-                videoRef.current.addEventListener('loadeddata', predictWebcam);
+                videoElement.srcObject = stream;
+                videoElement.addEventListener('loadeddata', predictWebcam);
             } catch (err) {
                 console.error('Error accessing webcam:', err);
             }
         };
 
         const predictWebcam = () => {
-            if (!handLandmarker || !videoRef.current) return;
+            if (!handLandmarker || !videoElement) return;
 
-            let startTimeMs = performance.now();
-            if (videoRef.current.currentTime !== lastVideoTime.current) {
-                lastVideoTime.current = videoRef.current.currentTime;
+            const startTimeMs = performance.now();
+            if (videoElement.currentTime !== lastVideoTime.current) {
+                lastVideoTime.current = videoElement.currentTime;
 
-                const results = handLandmarker.detectForVideo(videoRef.current, startTimeMs);
+                const results = handLandmarker.detectForVideo(videoElement, startTimeMs);
 
                 if (results.landmarks && results.landmarks.length > 0) {
                     setHandDetected(true);
@@ -110,15 +111,15 @@ export const GestureController = () => {
         init();
 
         return () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+            if (videoElement && videoElement.srcObject) {
+                (videoElement.srcObject as MediaStream).getTracks().forEach(track => track.stop());
             }
             if (handLandmarker) {
                 handLandmarker.close();
             }
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, [setGesture, setHandDetected, setPanDelta, setZoomFactor]);
 
     return (
         <video
