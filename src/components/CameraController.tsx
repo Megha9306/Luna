@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 // Use OrbitControls from drei, but we need to access its instance to control it
 export const CameraController = ({ controlsRef }: { controlsRef: MutableRefObject<OrbitControlsImpl | null> }) => {
-    const { panDelta, zoomFactor, gesture, inputMode } = useGestureStore();
+    const { panDelta, zoomFactor, gesture, inputMode, autoRotate } = useGestureStore();
     const { camera } = useThree();
 
     useFrame((_, delta) => {
@@ -41,6 +41,20 @@ export const CameraController = ({ controlsRef }: { controlsRef: MutableRefObjec
                     camera.position.copy(dir.multiplyScalar(newDist));
                 }
             }
+        }
+
+        // --- MANAUAL AUTO-ROTATION ---
+        // We handle this manually to prevent OrbitControls from resetting its internal state
+        // when the 'autoRotate' prop changes, which causes the camera to jump.
+        if (autoRotate && controlsRef.current) {
+            // Speed factor: 0.2 (previous prop) * delta roughly
+            // OrbitControls default speed is 2.0, which means 2.0 * 1/60 per frame? 
+            // Let's try a small value and adjust. 
+            // OrbitControls: 30 seconds per round at speed 2.0.
+            // 2 * PI / 30 / 60 ~ 0.0035 rad per frame.
+            const autoRotateSpeed = 0.2 * delta;
+            controlsRef.current.setAzimuthalAngle(controlsRef.current.getAzimuthalAngle() + autoRotateSpeed);
+            controlsRef.current.update();
         }
     });
 
